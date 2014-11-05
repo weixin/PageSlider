@@ -66,7 +66,7 @@ new PageSlide({
 
 ## 示例
 
-![Alt text](https://raw.githubusercontent.com/littledu/littledu.github.io/master/demo/pageSlide/cli.jpg)
+![Alt text](https://code.jd.com/jd_41e5d24c4645f/jae_littledu_test/imag/master/pageSlide/cli.jpg)
 
 或 点击 http://littledu.github.io/demo/pageSlide/index.html
 
