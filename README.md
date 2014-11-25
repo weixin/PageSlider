@@ -1,6 +1,6 @@
 # PageSide -- 移动端切屏组件
 
-`PageSlide` 是一个用于移动端屏切的工具，支持竖切，横切，预加载等功能。
+`PageSlide` 是一个用于移动端屏切的工具，支持竖切，横切，预加载等功能，同时支持 AMD 模块化加载方式
 
 ## 使用方法
 
@@ -23,18 +23,14 @@ html, body, .wrap{
     overflow: hidden;
 }
 .screen{
-    position: absolute;
-    left: 0;
-    top: 0;
     width: 100%;
     height: 100%;
     overflow: hidden;
     -webkit-backface-visibility: hidden;
     -webkit-perspective: 1000;
-    background-color: #fff;
 }
 ```
->由于实现原理的问题，故上面的 `background-color` 样式设置是必需的，可以根据实际需要什么颜色设置。
+>由于实现原理的问题，故上面的样式设置是必需的。
 
 **JavaScript**
 ```javascript

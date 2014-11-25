@@ -23,18 +23,22 @@ function PageSlide(config){
     this.speed = config.speed ? config.speed/1000 : 0.5;
     this.control = config.control || false;
     this.controlClass = config.controlClass || 'page-control';
+    this.bubble = config.bubble || false;
     this.preLoad = config.preLoad || false;
     this.loading = config.loading;
+    this.onComplete = config.onComplete || function(){};
+    this.onBefore = config.onBefore || function(){};
 
     this.index = 0;
     this.curPage = this.pages[this.index];
+    this.wraper = this.curPage.parentNode;
 
-    this.width = this.curPage.clientWidth;
-    this.height = this.curPage.clientHeight;
+    this.width = window.innerWidth;
+    this.height = window.innerHeight;
 
     this.flag = null;
+    this._swipe = 'up';
     this.controls = null;
-
     this._init();
 }
 
@@ -42,11 +46,13 @@ PageSlide.prototype = {
     _init: function(){
         var self = this;
 
-        //初始化层级
-        for(var i = 0, k = this.length; i < this.length; i++){
-            this.pages[i].style.zIndex = 100 * k;
-            this.pages[i].style.webkitTransition = '-webkit-transform '+ this.speed +'s ' + this.animateFn;
-            k--;
+        //初始化CSS动画
+        this.wraper.style.webkitTransition = '-webkit-transform '+ this.speed +'s ' + this.animateFn;
+
+        for(var i = 0; i < this.length; i++){
+            if(this.swipe === 'X'){
+                this.pages[i].style.float = 'left';
+            }
         }
 
         //动态创建标签
@@ -54,25 +60,23 @@ PageSlide.prototype = {
             this._control();
         }
 
-        //页面加载完成前的“加载中”效果
-        if(typeof this.loading === 'function'){
-            this._loadingFn();
-        }
+        this.resizeSet();
 
         //当屏幕大小变化时,如竖屏变横屏，需重置下大小
         window.addEventListener('resize', function(){
-            self.width = self.curPage.clientWidth;
-            self.height = self.curPage.clientHeight;
+            self.width = window.innerWidth;
+            self.height = window.innerHeight;
+            self.resizeSet();
         }, false);
 
 
-        document.addEventListener('touchstart', function(e){
+        this.wraper.addEventListener('touchstart', function(e){
             self._startHandle(e);
         }, false);
-        document.addEventListener('touchmove', function(e){
+        this.wraper.addEventListener('touchmove', function(e){
             self._moveHandle(e);
         }, false);
-        document.addEventListener('touchend', function(e){
+        this.wraper.addEventListener('touchend', function(e){
             self._endHandle(e);
         }, false);
 
@@ -80,7 +84,7 @@ PageSlide.prototype = {
     },
 
     _control: function(){
-        var pageParent = this.curPage.parentNode,
+        var oParent = this.wraper.parentNode,
             oControl = document.createElement('div'),
             sDot = '';
         
@@ -91,32 +95,17 @@ PageSlide.prototype = {
         oControl.className = this.controlClass;
         oControl.style.zIndex = 9999;
 
-        pageParent.appendChild(oControl);
+        oParent.appendChild(oControl);
 
-        this.controls = pageParent.getElementsByTagName('span');
-    },
-
-    _loadingFn: function(){
-        var imgs = this.curPage.parentNode.getElementsByTagName('img'),
-            length = imgs.length,
-            self = this,
-            count = 0;
-
-        //监听图片，当所有图片加载完成认为页面已加载完成
-        for(var i = 0; i < length; i++){
-            var img = new Image();
-            img.onload = img.onerror = img.onabort = function(){
-                count++;
-                if(count <= length){
-                    self.loading.call(self, Math.floor(count*100)/length);
-                }
-            };
-            img.src = imgs[i].src;
-        }
+        this.controls = oParent.getElementsByTagName('span');
     },
 
     _startHandle: function(e){
         var touch = e.touches[0];
+
+        if(this.bubble){
+            e.stopPropagation();
+        }
 
         this.startX = touch.clientX;
         this.startY = touch.clientY;
@@ -161,23 +150,21 @@ PageSlide.prototype = {
     },
 
     run: function(index){
-        var prevPage = this.pages[index - 1],
-            curPage = this.pages[index],
-            nextPage = this.pages[index + 1];
+        var self = this,
+            target;
 
         if(index >= this.length || index < 0){
             return;
         }
 
-        curPage.style.webkitTransform = 'translate3d(0,0,0)';
-        curPage.style.visibility = 'visible';
+        this.onBefore && this.onBefore.call(this);
 
         if(this.swipe === 'X'){
-            prevPage && (prevPage.style.webkitTransform = 'translate3d('+ -this.width +'px,0,0)');
-            nextPage && (nextPage.style.webkitTransform = 'translate3d('+ this.width +'px,0,0)');
+            target = (-this.width * index) + 'px';
+            this.wraper.style.webkitTransform = 'translate('+ target +', 0)';
         }else if(this.swipe === 'Y'){
-            prevPage && (prevPage.style.webkitTransform = 'translate3d(0,'+ -this.height +'px,0)');
-            nextPage && (nextPage.style.webkitTransform = 'translate3d(0,'+ this.height +'px,0)');
+            target = (-this.height * index) + 'px';
+            this.wraper.style.webkitTransform = 'translate(0, '+ target +')';
         }
 
         //切换当前屏class
@@ -187,7 +174,10 @@ PageSlide.prototype = {
         this.control && this._toggleClassFn(this.controls, this.index, index);
 
         this.index = index;
-
+        
+        this.onComplete && this.onComplete.call(this);
+        
+        var nextPage = this.pages[this.index];
         //预加载功能
         if(this.preLoad && nextPage && !nextPage.parsed){
             this._preLoadFn(nextPage);
@@ -212,6 +202,28 @@ PageSlide.prototype = {
             ele.innerHTML = textarea.value;
             ele.parsed = true;
         }
+    },
+
+    resizeSet: function(){
+        if(this.swipe === 'X'){
+            this.wraper.style.width = this.width * this.length + 'px';
+            this.wraper.style.height = this.height + 'px';
+        }
+
+        if(this.swipe === 'Y'){
+            this.wraper.style.width = this.width + 'px';
+            this.wraper.style.height = this.height * this.length + 'px';
+        }
+        
+        for(var i = 0; i < this.length; i++){
+            this.pages[i].style.width = this.width + 'px';
+            this.pages[i].style.height = this.height + 'px';
+        }
+        
+        this.run(this.index);
     }
 }
 
+if ( typeof define === "function" && define.amd ) {
+    define( "pageSlide", [], function () { return pageSlide; } );
+}
