@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, minimal-ui">
+    <meta content="yes" name="apple-mobile-web-app-capable">
+    <meta content="black" name="apple-mobile-web-app-status-bar-style">
+    <meta name="format-detection" content="telephone=no, email=no">
+    <title>data-animation</title>
+    <link rel="stylesheet" href="../css/style.css"/>
+</head>
+<body>
+<div class="page-wrap">
+    <div class="page">
+        <div class="title" data-animation='{"name": "slideToTop", "duration": 800, "timing-function": "ease", "fill-mode": "both"}'>page one</div>
+        <div class="subtitle" data-animation='{"name": "slideToTop", "duration": 800, "delay": 300,  "timing-function": "ease", "fill-mode": "both"}'>page one subtitle</div>
+
+        <div class="arrow"></div>
+    </div>
+
+    <div class="page">
+        <div class="title" data-animation='{"name": "slideToTop", "duration": 800, "timing-function": "ease", "fill-mode": "both"}'>page two</div>
+        <div class="subtitle" data-animation='{"name": "slideToTop", "duration": 800, "delay": 300,  "timing-function": "ease", "fill-mode": "both"}'>page two subtitle</div>
+
+        <div class="arrow"></div>
+    </div>
+    <div class="page">
+        <div class="title" data-animation='{"name": "slideToTop", "duration": 800, "timing-function": "ease", "fill-mode": "both"}'>page three</div>
+        <div class="subtitle" data-animation='{"name": "slideToTop", "duration": 800, "delay": 300,  "timing-function": "ease", "fill-mode": "both"}'>page three subtitle</div>
+
+        <div class="arrow"></div>
+    </div>
+    <div class="page">
+        <div class="title" data-animation='{"name": "slideToTop", "duration": 800, "timing-function": "ease", "fill-mode": "both"}'>page four</div>
+        <div class="subtitle" data-animation='{"name": "slideToTop", "duration": 800, "delay": 300,  "timing-function": "ease", "fill-mode": "both"}'>page four subtitle</div>
+    </div>
+</div>
+
+<script src="../js/zepto_modify.js"></script>
+<script src="../js/pageSlide.js"></script>
+<script>
+    new PageSlide({
+        pages: $('.page-wrap .page')
+    });
+
+</script>
+</body>
+</html>

@@ -1,0 +1,139 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+html, body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.page-wrap {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.page {
+    width: 100%;
+    height: 100%;
+    -webkit-backface-visibility: hidden;
+    -webkit-perspective: 1000;
+}
+
+.page:first-child {
+    background-color: #7B68EE;
+}
+
+.page:nth-child(2) {
+    background-color: #00BFFF;
+}
+
+.page:nth-child(3) {
+    background-color: #ff8c81;
+}
+
+.page:last-child {
+    background-color: #40E0D0;
+}
+
+.title {
+    width: 100%;
+    text-align: center;
+    padding-top: 40px;
+    color: #000;
+    font-size: 18px;
+    opacity: 0;
+}
+
+.subtitle {
+    width: 100%;
+    text-align: center;
+    padding-top: 20px;
+    color: #000;
+    font-size: 16px;
+    opacity: 0;
+}
+
+.arrow, {
+    position: absolute;
+    left: 50%;
+    bottom: 10px;
+    width: 33px;
+    height: 18px;
+    margin-left: -16px;
+    background: url(../img/arrow.png) no-repeat;
+    background-size: 33px auto;
+    opacity: 0;
+}
+
+.arrow-h{
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    width: 33px;
+    height: 18px;
+    margin-top: -9px;
+    opacity: 0;
+}
+
+.arrow-h i{
+    display: block;
+    width: 33px;
+    height: 18px;
+    background: url(../img/arrow.png) no-repeat;
+    background-size: 33px auto;
+    -webkit-transform: rotate(-90deg);
+}
+
+.current .arrow {
+    -webkit-animation: swipeMove 1.5s 1s ease infinite;
+}
+
+.current .arrow-h {
+    -webkit-animation: swipeMoveLeft 1.5s 1s ease infinite;
+}
+
+/*上滑提示*/
+@-webkit-keyframes swipeMoveTop {
+    0% {
+        opacity: 0;
+        -webkit-transform: translate3d(0, 10px, 0);
+    }
+    70% {
+        opacity: 1;
+        -webkit-transform: translate3d(0, 0, 0);
+    }
+    100% {
+        opacity: 0;
+        -webkit-transform: translate3d(0, -10px, 0);
+    }
+}
+
+/*左滑提示*/
+@-webkit-keyframes swipeMoveLeft {
+    0% {
+        opacity: 0;
+        -webkit-transform: translate3d(10px, 0, 0);
+    }
+    70% {
+        opacity: 1;
+        -webkit-transform: translate3d(0, 0, 0);
+    }
+    100% {
+        opacity: 0;
+        -webkit-transform: translate3d(-10px, 0, 0);
+    }
+}
+
+@-webkit-keyframes slideToTop {
+    0% {
+        opacity: 0;
+        -webkit-transform: translate3d(0, 100px, 0);
+    }
+    100% {
+        opacity: 1;
+        -webkit-transform: translate3d(0, 0, 0);
+    }
+}

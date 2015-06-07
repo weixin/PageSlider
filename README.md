@@ -1,31 +1,46 @@
-# PageSide -- 移动端切屏组件
+# PageSide -- 移动端滑屏组件
 
-`PageSlide` 是一个用于移动端屏切的工具，支持竖切，横切，预加载等功能，同时支持 AMD 模块化加载方式
+`PageSlide` 是一个用于移动端滑屏组件，支持上下滑动，左右滑动，禁止滑动等功能，同时支持 AMD 模块化加载方式
 
 ## 使用方法
 
 **HTML：**
 ```html
-<div class="wrap">
-    <section class="screen screen1">screen1</section>
-    <section class="screen screen2">screen2</section>
-    <section class="screen screen3">screen3</section>
-    <section class="screen screen4">screen4</section>
-    <section class="screen screen5">screen5</section>
+<div class="page-wrap">
+    <div class="page">
+        <div class="title">page one</div>
+        <div class="subtitle">page one subtitle</div>
+        <div class="arrow"></div>
+    </div>
+
+    <div class="page">
+        <div class="title">page two</div>
+        <div class="subtitle">page two subtitle</div>
+        <div class="arrow"></div>
+    </div>
+    <div class="page">
+        <div class="title">page three</div>
+        <div class="subtitle">page three subtitle</div>
+        <div class="arrow"></div>
+    </div>
+    <div class="page">
+        <div class="title">page four</div>
+        <div class="subtitle">page four subtitle</div>
+    </div>
 </div>
 ```
 
 **CSS**
 ```css
-html, body, .wrap{
+html, body, .page-wrap {
     width: 100%;
     height: 100%;
     overflow: hidden;
 }
-.screen{
+
+.page {
     width: 100%;
     height: 100%;
-    overflow: hidden;
     -webkit-backface-visibility: hidden;
     -webkit-perspective: 1000;
 }
@@ -35,7 +50,7 @@ html, body, .wrap{
 **JavaScript**
 ```javascript
 new PageSlide({
-    pages: document.querySelectorAll('.screen')
+    pages: $('.page-wrap .page')
 });
 ```
 
@@ -43,14 +58,16 @@ new PageSlide({
 
 ```javascript
 new PageSlide({
-    pages: document.querySelectorAll('.screen'),  //必需，需要切换的所有屏
-    swipe: 'Y',                                   //可选，控制切换方向['X', 'Y']，默认值为 'Y'
-    toggleClass: 'current',                       //可选, 当前屏的class (方便实现内容的进场动画)，默认值为 'current'
-    animateFn: 'ease-in-out',                     //可选，屏切动画，可选值为 ['linear', 'ease', 'ease-in', 'ease-out', 'ease-in-out']，默认值为 'ease-in-out'
-    speed: 500,                                   //可选，屏切速度，建议值范围为[100-1000]，默认值为 500
-    control: false,                               //可选，动态生成屏标识，默认为 false
-    controlClass: 'page-control',                 //可选，依赖于 control 属性，方便用户设置标识样式，默认值为 'page-control'
-    preLoad: false                                //可选，图片预加载，切换到当前屏时，预先加载下一屏的图片，默认为 false
+    pages: $('.page-wrap .page'),   //必需，需要切换的所有屏
+    direction: 'v',                 //可选，vertical 或 v 为上下滑动，horizontal 或 h 为左右滑动，默认为 v
+    currentClass: 'current',        //可选, 当前屏的class (方便实现内容的进场动画)，默认值为 'current'
+    gestureFollowing: 'false',      //可选，如果为 true，则开启手势跟随模式
+    hasDot: 'false',                //可选，生成标识点结构，样式自己控制
+    preventDefault: true,           //可选，是否阻止默认行为
+    rememberLastVisited: true,      //可选，记住上一次访问结束后的索引值，可用于实现页面返回后是否回到上次访问的页面
+    dev: false,                     //可选，开发模式，传入具体页面索引值
+    oninit: function () {},         //可选，初始化完成时的回调
+    onchange: function () {}        //可选，每一屏切换完成时的回调
 });
 ```
 
@@ -58,30 +75,87 @@ new PageSlide({
 
 - `prev()` 上一屏
 - `next()` 下一屏
-- `run(n)` 跳转到第 n 屏
+- `moveTo(n)` 跳转到第 n 屏，有缓动效果
+- `moveTo(n, true)` 直接跳到第 n 屏，没有缓动效果
 
-## 示例
+## 功能点
 
-![Alt text](https://raw.githubusercontent.com/littledu/littledu.github.io/master/demo/pageSlide/cli.jpg)
+### 1. 支持 dom 绑定动画
 
-或 点击 http://littledu_test.jd-app.com/pageSlide/
+通常，页面上的元素动画都是通过样式来控制，如下：
+```css
+.current .dom{
+    -webkit-animation: slideToTop 1s 0.5s ease both;
+}
+```
 
-
-### 预加载功能介绍
-
-经常的，在微信朋友圈打开某些屏切页面，总需要等很久，因为其可能做了很酷弦的效果，用了不少图片，为了让效果体验更流畅，所以有些会加一个 loading 效果，等页面完全加载完了再显示出来。但也是依然要等。所以，PageSlide 想在需要的时候再加载这些图片，一来可以提高页面加载速度，二来用户没看完也没必要加载后面的图片。故有此功能。
-
-**使用方法：**  
-
-1. 用 `textarea` 将内容装起来，如：
+pageSlide 支持将动画直接绑定在具体 dom 元素上，如下：
 ```html
-<div class="wrap">
-    <section class="screen srceen1">screen1</section>
-    <section class="screen srceen2"><textarea style="display:none;">srceen2</textarea></section>
-    <section class="screen srceen3"><textarea style="display:none;">>srceen3</textarea></section>
+<div class="title" data-animation='{"name": "slideToTop", "duration": 800, "timing-function": "ease", "fill-mode": "both"}'>
+    page two
+</div>
+<div class="subtitle" data-animation='{"name": "slideToTop", "duration": 800, "delay": 300,  "timing-function": "ease", "fill-mode": "both"}'>
+    page two subtitle
 </div>
 ```
-2. `preLoad` 参数设为 `true` 即可。
+
+### 2. 手势跟随
+
+pageSlide 最初的滑动较简单，直接判断手势进行翻屏，而有朋友喜欢在 touchmove 时能拉动页面，看到下一屏，此为朋友说的 `手势跟随`。其也 因为没有此功能而放弃使用 pageSlide，故新版做了支持，只需要如右设置即可： `gestureFollowing: true`。
+
+### 3. 锁定禁止滑动
+
+随着业务的发展，有时候需要锁定当前屏，不响应用户的滑动事件，需要点击某按钮或完成某些操作后再自动滑屏。本次更新提供了以下方法进行锁定：
+
+```html
+<div class="page" data-lock-next="true" data-lock-prev="true"></div>
+```
+
+`data-lock-next`： 禁止往后滑
+`data-lock-prev`： 禁止往前滑
+
+### 4. 记住页面索引
+
+有时候，当页面跳走返回时，希望能直接返回到上次跳走的页面，而不希望重头再来，只需如右设置：`rememberLastVisited: true`，即会保存当前页面索引到 localstorage，当返回时即可方便操作，如下：
+
+```javascript
+new PageSlide({
+    pages: $('.page-wrap .page'),
+    rememberLastVisited: true,
+    oninit: function(){
+        //返回时，需告诉我们此时为返回动作而不是刷新，可以通过 hash 告诉我们
+        //PageSlide 所有回调接口 this 指向 PageSlide，方便进行操作
+        if(返回为 true){
+            this.moveTo(this.lastVisitedIndex, true);
+        }
+    }
+});
+```
+
+### 5. dev 模式
+此为个人习惯，我在开发时，假设在写第二屏动画时，我会将第一屏隐藏掉，以方便每次刷新都直接在第二屏，而不需要去滑动。但当我在写第 5 屏动画时，我需要手动隐藏 n-1 屏。。。。然后此时领导过来说，XXX，来，让我看一下你做好的效果，然后我又要手动把之前隐藏的显示，十几秒后看完我继续开发又要继续隐藏。。。。。人生如此短暂，受不鸟呐。所以，只需要如下操作，即可愉快的开发：
+
+
+```javascript
+new PageSlide({
+    pages: $('.page-wrap .page'),
+    dev: 0 //0|1|2|3|...
+});
+```
+
+## TODO
+看后面需求是否有必要实现如下功能：
+
+1. scale 的动画切换方式
+2. cover 的动画切换方式
+3. 支持内容超出一屏先滚完再翻页
+
+## Releases
+
+#### 0.2.0 基于 zepto 重写，去除 预加载 等功能。
+#### 0.1.0 实现基本功能。
+
+
 
 
 

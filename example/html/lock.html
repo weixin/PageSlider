@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, minimal-ui">
+    <meta content="yes" name="apple-mobile-web-app-capable">
+    <meta content="black" name="apple-mobile-web-app-status-bar-style">
+    <meta name="format-detection" content="telephone=no, email=no">
+    <title>lock</title>
+    <link rel="stylesheet" href="../css/style.css"/>
+    <!--custom style-->
+    <style>
+        .current .title{
+            -webkit-animation: slideToTop .8s ease both;
+        }
+
+        .current .subtitle{
+            -webkit-animation: slideToTop .8s 0.3s ease both;
+        }
+    </style>
+</head>
+<body>
+<div class="page-wrap">
+    <!-- data-lock-next 禁止下滑 -->
+    <!-- data-lock-prev 禁止上滑 -->
+    <div class="page" data-lock-next="true">
+        <div class="title">lock example</div>
+        <div class="subtitle">click the arrow to move next page</div>
+
+        <div class="arrow"></div>
+    </div>
+
+    <div class="page">
+        <div class="title">page two</div>
+        <div class="subtitle">page two subtitle</div>
+        <div class="arrow"></div>
+    </div>
+    <div class="page">
+        <div class="title">page three</div>
+        <div class="subtitle">page three subtitle</div>
+        <div class="arrow"></div>
+    </div>
+    <div class="page">
+        <div class="title">page four</div>
+        <div class="subtitle">page four subtitle</div>
+    </div>
+</div>
+
+<script src="../js/zepto_modify.js"></script>
+<script src="../js/pageSlide.js"></script>
+<script>
+    var pageSlide = new PageSlide({
+        pages: $('.page-wrap .page')
+    });
+
+    $('.arrow').on('tap', function(){
+        pageSlide.next();
+    });
+
+</script>
+</body>
+</html>
