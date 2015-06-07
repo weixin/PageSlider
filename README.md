@@ -143,6 +143,25 @@ new PageSlide({
 });
 ```
 
+## example
+
+### 1. default
+
+<a href="http://littledu.github.io/pageSlide/example/html/default.html" target="_blank"><img src="http://littledu.github.io/pageSlide/cli/default.png"></a>
+
+### 2. 左右滑动
+
+<a href="http://littledu.github.io/pageSlide/example/html/horizontal.html" target="_blank"><img src="http://littledu.github.io/pageSlide/cli/horizontal.png"></a>
+
+### 3. 手势跟随
+
+<a href="http://littledu.github.io/pageSlide/example/html/gestureFollowing.html" target="_blank"><img src="http://littledu.github.io/pageSlide/cli/gestureFollowing.png"></a>
+
+### 4. 锁屏
+
+<a href="http://littledu.github.io/pageSlide/example/html/lock.html" target="_blank"><img src="http://littledu.github.io/pageSlide/cli/lock.png"></a>
+
+
 ## TODO
 看后面需求是否有必要实现如下功能：
 

@@ -56,7 +56,7 @@ html, body {
     opacity: 0;
 }
 
-.arrow, {
+.arrow{
     position: absolute;
     left: 50%;
     bottom: 10px;
@@ -88,7 +88,7 @@ html, body {
 }
 
 .current .arrow {
-    -webkit-animation: swipeMove 1.5s 1s ease infinite;
+    -webkit-animation: swipeMoveTop 1.5s 1s ease infinite;
 }
 
 .current .arrow-h {
