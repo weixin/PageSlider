@@ -116,6 +116,7 @@
 
             //如果动画在执行中则不予以操作
             if (state === 'running') {
+                e.preventDefault();
                 return;
             }
 
@@ -139,6 +140,12 @@
         _moveHandle: function (e) {
             var touch = e.changedTouches[0],
                 distance;
+
+            //如果动画在执行中则不予以操作
+            if (state === 'running') {
+                e.preventDefault();
+                return;
+            }
 
             //如果不需要手势跟随，直接返回
             if (!this.gestureFollowing) {
@@ -165,8 +172,6 @@
             //移除动画缓动
             this._removeTransition();
 
-            state = 'running';
-
             if (this.direction === 'v') {
                 this.target.css('-webkit-transform', 'translate3d(0, ' + distance + ', 0)');
             } else {
@@ -180,9 +185,16 @@
         _endHandle: function (e) {
             var touch = e.changedTouches[0],
                 distance;
+            
+            //如果动画在执行中则不予以操作
+            if (state === 'running') {
+                e.preventDefault();
+                return;
+            }
 
             endPos = this.direction === 'v' ? touch.clientY : touch.clientX;
             distance = endPos - startPos;
+
 
             //设置动画缓动
             this._setTransition();
@@ -206,19 +218,22 @@
                     }
                 }
             }
+
+            this._preventDefault(e);
         },
 
         moveTo: function (index, direct) {
             var distance,
                 self = this;
 
+            state = 'running';
+
             direct = direct || false;
 
             if (index >= this.length || index < 0) {
+                state = 'end';
                 return;
             }
-
-            state = 'running';
 
             direct && this._removeTransition();
 
@@ -234,7 +249,6 @@
 
             clearTimeout(this.timer);
             this.timer = setTimeout(function () {
-                state = 'end';
                 self._currentClass(index);
                 self.index = index;
                 self.onchange.call(self);
@@ -243,6 +257,7 @@
 
                 self.rememberLastVisited && self._saveLastVisited();
 
+                state = 'end';
                 clearTimeout(this.timer);
             }, 500);
         },
