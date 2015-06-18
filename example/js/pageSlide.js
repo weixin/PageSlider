@@ -1,4 +1,7 @@
 /**
+ * Created by littledu on 15/6/17.
+ */
+/**
  * @author  : littledu
  * @version : 0.2.0
  * @date    : 2015-06-07
@@ -133,8 +136,6 @@
                 var valArr = this.target.css('-webkit-transform').match(/translate3d\((-?\d+)px,\s+(-?\d+)px,.*\)/);
                 offset = parseFloat(this.direction === 'v' ? valArr[2] : valArr[1]);
             }
-
-            this._preventDefault(e);
         },
 
         _moveHandle: function (e) {
@@ -218,8 +219,6 @@
                     }
                 }
             }
-
-            this._preventDefault(e);
         },
 
         moveTo: function (index, direct) {
@@ -390,5 +389,3 @@ if (typeof define === "function" && define.amd) {
         return PageSlide;
     });
 }
-
-
