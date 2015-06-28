@@ -133,9 +133,9 @@
             lockPrev = curPage.data('lock-prev');
 
             //是否是长页面
-            curPage.pageScrollHeight = curPage.data('height');
-            if (curPage.pageScrollHeight) {
-                curPage.preventDefault = false;
+            curPage[0].pageScrollHeight = curPage.data('height');
+            if (curPage[0].pageScrollHeight) {
+                curPage[0].preventDefault = false;
                 pageScrollTop = pageHeight + curPage.scrollTop();
             }
 
@@ -213,7 +213,7 @@
             if (distance > 0) {
                 if (!lockPrev) {
 
-                    if (curPage.pageScrollHeight && pageScrollTop > pageHeight) {
+                    if (curPage[0].pageScrollHeight && pageScrollTop > pageHeight) {
                         return;
                     }
 
@@ -227,7 +227,7 @@
             } else {
                 if (!lockNext) {
 
-                    if (curPage.pageScrollHeight && pageScrollTop < curPage.pageScrollHeight) {
+                    if (curPage[0].pageScrollHeight && pageScrollTop < curPage[0].pageScrollHeight) {
                         return;
                     }
 
@@ -274,7 +274,7 @@
                 direct && self._setTransition();
 
                 //如果是较长的页面，在翻屏时，重置滚动条位置
-                if (curPage && curPage.pageScrollHeight) {
+                if (curPage && curPage[0].pageScrollHeight) {
                     curPage.scrollTop(0);
                 }
 
@@ -334,9 +334,9 @@
                     $this.data('height', height);
                 }
 
-                $(this).width(pageWidth + 'px');
-                $(this).height(pageHeight + 'px');
-                $(this).preventDefault = true; //每屏都阻止默认行为
+                $this.width(pageWidth + 'px');
+                $this.height(pageHeight + 'px');
+                $this[0].preventDefault = true; //每屏都阻止默认行为
             });
 
             if (direction === 'v') {
@@ -412,7 +412,7 @@
         },
 
         _preventDefault: function (e) {
-            curPage.preventDefault && e.preventDefault();
+            curPage[0].preventDefault && e.preventDefault();
         },
 
         _dev: function () {
