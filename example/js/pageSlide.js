@@ -174,7 +174,6 @@
             }
 
             //下面是在有手势跟随时的一些情况
-
             //1. 如果在第一屏或最后一屏，直接返回
             if ((this.index <= 0 && endPos > startPos) || (this.index >= this.length - 1 && endPos < startPos)) {
                 e.preventDefault();
@@ -284,7 +283,7 @@
 
                 //如果是较长的页面，在翻屏时，重置滚动条位置
                 if (curPage && curPage[0].pageScrollHeight) {
-                    this.preventDefault = true;
+                    self.preventDefault = true;
                     curPage.scrollTop(0);
                 }
 
