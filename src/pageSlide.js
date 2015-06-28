@@ -18,6 +18,7 @@
         hasDot: false,            //是否生成标识点
         preventDefault: true,     //是否阻止默认事件
         rememberLastVisited: false,
+        animationPlayOnce: false,
         dev: false,               //开发模式，传入数值，直接跳到正在开发的屏数
         oninit: function () {     //初始化完成时的回调
         },
@@ -34,7 +35,8 @@
         state,
         startPos,
         endPos,
-        offset;
+        offset,
+        pageScrollTop;
 
     function PageSlide(options) {
         $.extend(this, defaults, options);
@@ -130,6 +132,13 @@
             lockNext = curPage.data('lock-next');
             lockPrev = curPage.data('lock-prev');
 
+            //是否是长页面
+            curPage.pageScrollHeight = curPage.data('height');
+            if (curPage.pageScrollHeight) {
+                curPage.preventDefault = false;
+                pageScrollTop = pageHeight + curPage.scrollTop();
+            }
+
             //手势跟随判断
             if (this.gestureFollowing) {
                 //获取当前的位置值
@@ -144,7 +153,7 @@
 
             //如果动画在执行中则不予以操作
             if (state === 'running') {
-                e.preventDefault();
+                this._preventDefault(e);
                 return;
             }
 
@@ -189,7 +198,7 @@
 
             //如果动画在执行中则不予以操作
             if (state === 'running') {
-                e.preventDefault();
+                this._preventDefault(e);
                 return;
             }
 
@@ -203,6 +212,11 @@
             //swipeDown
             if (distance > 0) {
                 if (!lockPrev) {
+
+                    if (curPage.pageScrollHeight && pageScrollTop > pageHeight) {
+                        return;
+                    }
+
                     if (distance > 20) {
                         this.prev();
                     } else {
@@ -212,6 +226,11 @@
 
             } else {
                 if (!lockNext) {
+
+                    if (curPage.pageScrollHeight && pageScrollTop < curPage.pageScrollHeight) {
+                        return;
+                    }
+
                     if (distance < -20) {
                         this.next();
                     } else {
@@ -254,6 +273,11 @@
 
                 direct && self._setTransition();
 
+                //如果是较长的页面，在翻屏时，重置滚动条位置
+                if (curPage && curPage.pageScrollHeight) {
+                    curPage.scrollTop(0);
+                }
+
                 self.rememberLastVisited && self._saveLastVisited();
 
                 state = 'end';
@@ -281,7 +305,7 @@
             var currentClass = this.currentClass;
 
             this.pages.eq(index).addClass(currentClass);
-            if (index !== this.index) {
+            if (index !== this.index && !this.animationPlayOnce) {
                 this.pages.eq(this.index).removeClass(currentClass);
             }
         },
@@ -292,6 +316,29 @@
             pageWidth = document.documentElement.clientWidth;
             pageHeight = document.documentElement.clientHeight;
 
+            this.pages.each(function () {
+                var $this = $(this),
+                    $children = $this.children(),
+                    height = 0;
+
+                //当子元素高度超过页面时，需滚完再切换
+                if ($children.length > 1) {
+                    $children.each(function () {
+                        height += $(this).height();
+                    })
+                } else {
+                    height = $children.height();
+                }
+
+                if (height > pageHeight) {
+                    $this.data('height', height);
+                }
+
+                $(this).width(pageWidth + 'px');
+                $(this).height(pageHeight + 'px');
+                $(this).preventDefault = true; //每屏都阻止默认行为
+            });
+
             if (direction === 'v') {
                 this.target.width(pageWidth + 'px');
                 this.target.height(pageHeight * this.length + 'px');
@@ -301,11 +348,6 @@
                 this.target.width(pageWidth * this.length + 'px');
                 this.target.height(pageHeight + 'px');
             }
-
-            this.pages.each(function () {
-                $(this).width(pageWidth + 'px');
-                $(this).height(pageHeight + 'px');
-            });
         },
 
         _createDot: function () {
@@ -370,7 +412,7 @@
         },
 
         _preventDefault: function (e) {
-            this.preventDefault && e.preventDefault();
+            curPage.preventDefault && e.preventDefault();
         },
 
         _dev: function () {

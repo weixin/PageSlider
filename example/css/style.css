@@ -12,12 +12,13 @@ html, body {
 .page-wrap {
     width: 100%;
     height: 100%;
-    overflow: hidden;
 }
 
 .page {
     width: 100%;
     height: 100%;
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
     -webkit-backface-visibility: hidden;
     -webkit-perspective: 1000;
 }
