@@ -3,8 +3,8 @@
  */
 /**
  * @author  : littledu
- * @version : 0.2.0
- * @date    : 2015-06-07
+ * @version : 0.2.1
+ * @date    : 2015-06-28
  * @repository: https://github.com/littledu/pageSlide
  */
 
@@ -16,8 +16,8 @@
         currentClass: 'current',  //当前 className
         gestureFollowing: false,  //是否需要手势跟随
         hasDot: false,            //是否生成标识点
-        preventDefault: true,     //是否阻止默认事件
         rememberLastVisited: false,
+        preventDefault: true,
         animationPlayOnce: false,
         dev: false,               //开发模式，传入数值，直接跳到正在开发的屏数
         oninit: function () {     //初始化完成时的回调
@@ -34,7 +34,6 @@
         lockPrev,
         state,
         startPos,
-        endPos,
         offset,
         pageScrollTop;
 
@@ -133,9 +132,9 @@
             lockPrev = curPage.data('lock-prev');
 
             //是否是长页面
-            curPage.pageScrollHeight = curPage.data('height');
-            if (curPage.pageScrollHeight) {
-                curPage.preventDefault = false;
+            curPage[0].pageScrollHeight = curPage.data('height');
+            if (curPage[0].pageScrollHeight) {
+                this.preventDefault = false;
                 pageScrollTop = pageHeight + curPage.scrollTop();
             }
 
@@ -149,12 +148,23 @@
 
         _moveHandle: function (e) {
             var touch = e.changedTouches[0],
-                distance;
+                distance,
+                endPos;
 
             //如果动画在执行中则不予以操作
             if (state === 'running') {
-                this._preventDefault(e);
+                e.preventDefault();
                 return;
+            }
+
+            endPos = this.direction === 'v' ? touch.clientY : touch.clientX;
+            distance = endPos - startPos;
+
+            //如果存在长页面，需多判断一下，以阻止默认行为
+            if(curPage[0].pageScrollHeight){
+                if(distance > 0 && pageScrollTop === pageHeight) e.preventDefault();
+
+                if(distance < 0 && pageScrollTop === curPage[0].pageScrollHeight) e.preventDefault();
             }
 
             //如果不需要手势跟随，直接返回
@@ -163,20 +173,20 @@
                 return;
             }
 
-            endPos = this.direction === 'v' ? touch.clientY : touch.clientX;
-            //如果在第一屏或最后一屏，直接返回
+            //下面是在有手势跟随时的一些情况
+            //1. 如果在第一屏或最后一屏，直接返回
             if ((this.index <= 0 && endPos > startPos) || (this.index >= this.length - 1 && endPos < startPos)) {
-                this._preventDefault(e);
+                e.preventDefault();
                 return;
             }
 
-            //如果向上或向下被禁止，直接返回
-            distance = endPos - startPos;
+            //2. 如果向上或向下被禁止，直接返回
             if ((distance > 0 && lockPrev) || distance < 0 && lockNext) {
-                this._preventDefault(e);
+                e.preventDefault();
                 return;
             }
 
+            //3. 没有特殊情况，需要手势跟随了，则
             distance = offset + distance + 'px';
 
             //移除动画缓动
@@ -194,11 +204,12 @@
 
         _endHandle: function (e) {
             var touch = e.changedTouches[0],
-                distance;
+                distance,
+                endPos;
 
             //如果动画在执行中则不予以操作
             if (state === 'running') {
-                this._preventDefault(e);
+                e.preventDefault();
                 return;
             }
 
@@ -210,32 +221,29 @@
             this._setTransition();
 
             //swipeDown
-            if (distance > 0) {
-                if (!lockPrev) {
+            if(distance > 0 && !lockPrev){
 
-                    if (curPage.pageScrollHeight && pageScrollTop > pageHeight) {
-                        return;
-                    }
-
-                    if (distance > 20) {
-                        this.prev();
-                    } else {
-                        this.moveTo(this.index);
-                    }
+                //如果是长页面，需判断一下是否到顶
+                if (curPage[0].pageScrollHeight && pageScrollTop > pageHeight) {
+                    return;
+                } else if(distance > 20){
+                    this.prev();
+                }else{
+                    this.moveTo(this.index);
                 }
 
-            } else {
-                if (!lockNext) {
+            }
 
-                    if (curPage.pageScrollHeight && pageScrollTop < curPage.pageScrollHeight) {
-                        return;
-                    }
+            //swipeUp
+            if(distance < 0 && !lockNext){
 
-                    if (distance < -20) {
-                        this.next();
-                    } else {
-                        this.moveTo(this.index);
-                    }
+                //如果是长页面，需判断一下是否到底
+                if (curPage[0].pageScrollHeight && pageScrollTop < curPage[0].pageScrollHeight) {
+                    return;
+                } else if(distance < -20){
+                    this.next();
+                }else{
+                    this.moveTo(this.index);
                 }
             }
         },
@@ -274,7 +282,8 @@
                 direct && self._setTransition();
 
                 //如果是较长的页面，在翻屏时，重置滚动条位置
-                if (curPage && curPage.pageScrollHeight) {
+                if (curPage && curPage[0].pageScrollHeight) {
+                    self.preventDefault = true;
                     curPage.scrollTop(0);
                 }
 
@@ -334,9 +343,8 @@
                     $this.data('height', height);
                 }
 
-                $(this).width(pageWidth + 'px');
-                $(this).height(pageHeight + 'px');
-                $(this).preventDefault = true; //每屏都阻止默认行为
+                $this.width(pageWidth + 'px');
+                $this.height(pageHeight + 'px');
             });
 
             if (direction === 'v') {
@@ -412,7 +420,7 @@
         },
 
         _preventDefault: function (e) {
-            curPage.preventDefault && e.preventDefault();
+            this.preventDefault && e.preventDefault();
         },
 
         _dev: function () {

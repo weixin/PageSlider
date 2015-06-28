@@ -41,6 +41,7 @@ html, body, .page-wrap {
 .page {
     width: 100%;
     height: 100%;
+    overflow: auto; /*如果是长页面，此属性必需*/
     -webkit-backface-visibility: hidden;
     -webkit-perspective: 1000;
 }
@@ -65,8 +66,10 @@ new PageSlide({
     hasDot: 'false',                //可选，生成标识点结构，样式自己控制
     preventDefault: true,           //可选，是否阻止默认行为
     rememberLastVisited: true,      //可选，记住上一次访问结束后的索引值，可用于实现页面返回后是否回到上次访问的页面
+    animationPlayOnce: false        //可选，切换页面时，动画只执行一次
     dev: false,                     //可选，开发模式，传入具体页面索引值
     oninit: function () {},         //可选，初始化完成时的回调
+    onbeforechange: function () {}  //可选，开始切换前的回调
     onchange: function () {}        //可选，每一屏切换完成时的回调
 });
 ```
@@ -143,6 +146,31 @@ new PageSlide({
 });
 ```
 
+### 6. 翻页时，页面元素动画只执行一次
+有时候，会有产品的需求希望在页面往回翻时，就不再执行进场等动画了，执行过一次就够了，只需要设置 `animationPlayOnce: true` 即可。
+
+```javascript
+new PageSlide({
+    pages: $('.page-wrap .page'),
+    animationPlayOnce: true
+});
+```
+
+### 7. 内容超出一屏先滚完再翻页
+这是一个较少见的需求，要求每一屏按固定高度设计，当在小屏幕下，滑动页面时，不是直接翻页，而是原生的滚动，当滚动到底部时，再滑动页面才触发翻页，具体效果可先扫描后面的相应二维码体验，具体示例代码如下：
+
+```html
+<div class="page" style="-webkit-overflow-scrolling: touch;">
+    <div class="page__inner" style="position: relative; height: 800px;">
+        <div class="title">page two</div>
+        <div class="subtitle">page two subtitle</div>
+        <div style="position: absolute; left: 20px; bottom: 10%">long page</div>
+        <div class="arrow"></div>
+    </div>
+</div>
+```
+在 `.page` 元素上设置 `-webkit-overflow-scrolling: touch;` 可触发原生的平滑滚动，让滚动效果体验更舒服，不设置也可以，但效果相差很大; 内层需设置一个大于屏幕的高度值，才会触发此效果，如果不设置，默认是遍历直接的子元素高度和来跟屏幕高度作比较判断是否是长内容页。
+
 ## example
 
 ### 1. default
@@ -161,16 +189,24 @@ new PageSlide({
 
 <a href="http://littledu.github.io/pageSlide/example/html/lock.html" target="_blank"><img src="http://littledu.github.io/pageSlide/cli/lock.png"></a>
 
+### 5. 只执行一次动画
+
+<a href="http://littledu.github.io/pageSlide/example/html/animationPlayOnce.html" target="_blank"><img src="http://littledu.github.io/pageSlide/cli/animationPlayOnce.png"></a>
+
+### 6. 内容超出一屏先滚完再翻页
+
+<a href="http://littledu.github.io/pageSlide/example/html/longpage.html" target="_blank"><img src="http://littledu.github.io/pageSlide/cli/longpage.png"></a>
 
 ## TODO
 看后面需求是否有必要实现如下功能：
 
 1. scale 的动画切换方式
 2. cover 的动画切换方式
-3. 支持内容超出一屏先滚完再翻页
+3. 支持内容超出一屏先滚完再翻页[0.2.1 已支持]
 
 ## Releases
 
+#### 0.2.1 增加只执行一次动画，onbeforechange 回调，内容超出一屏先滚完再翻页 功能。
 #### 0.2.0 基于 zepto 重写，去除 预加载 等功能。
 #### 0.1.0 实现基本功能。
 
