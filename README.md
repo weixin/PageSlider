@@ -1,6 +1,6 @@
-# PageSide -- 移动端滑屏组件
+# PageSlider -- 移动端滑屏组件
 
-`PageSlide` 是一个用于移动端滑屏组件，支持上下滑动，左右滑动，禁止滑动等功能，同时支持 AMD 模块化加载方式
+`PageSlider` 是一个用于移动端滑屏组件，支持上下滑动，左右滑动，禁止滑动等功能，同时支持 AMD 模块化加载方式
 
 ## 使用方法
 
@@ -41,7 +41,6 @@ html, body, .page-wrap {
 .page {
     width: 100%;
     height: 100%;
-    overflow: auto; /*如果是长页面，此属性必需*/
     -webkit-backface-visibility: hidden;
     -webkit-perspective: 1000;
 }
@@ -50,7 +49,7 @@ html, body, .page-wrap {
 
 **JavaScript**
 ```javascript
-new PageSlide({
+new PageSlider({
     pages: $('.page-wrap .page')
 });
 ```
@@ -58,9 +57,9 @@ new PageSlide({
 ## 参数
 
 ```javascript
-new PageSlide({
+new PageSlider({
     pages: $('.page-wrap .page'),   //必需，需要切换的所有屏
-    direction: 'v',                 //可选，vertical 或 v 为上下滑动，horizontal 或 h 为左右滑动，默认为 v
+    direction: 'vertical',          //可选，vertical 或 v 为上下滑动，horizontal 或 h 为左右滑动，默认为 vertical
     currentClass: 'current',        //可选, 当前屏的class (方便实现内容的进场动画)，默认值为 'current'
     gestureFollowing: 'false',      //可选，如果为 true，则开启手势跟随模式
     hasDot: 'false',                //可选，生成标识点结构，样式自己控制
@@ -92,7 +91,7 @@ new PageSlide({
 }
 ```
 
-pageSlide 支持将动画直接绑定在具体 dom 元素上，如下：
+PageSlider 支持将动画直接绑定在具体 dom 元素上，如下：
 ```html
 <div class="title" data-animation='{"name": "slideToTop", "duration": 800, "timing-function": "ease", "fill-mode": "both"}'>
     page two
@@ -104,7 +103,7 @@ pageSlide 支持将动画直接绑定在具体 dom 元素上，如下：
 
 ### 2. 手势跟随
 
-pageSlide 最初的滑动较简单，直接判断手势进行翻屏，而有朋友喜欢在 touchmove 时能拉动页面，看到下一屏，此为朋友说的 `手势跟随`。其也 因为没有此功能而放弃使用 pageSlide，故新版做了支持，只需要如右设置即可： `gestureFollowing: true`。
+PageSlider 最初的滑动较简单，直接判断手势进行翻屏，而有朋友喜欢在 touchmove 时能拉动页面，看到下一屏，此为朋友说的 `手势跟随`。其也 因为没有此功能而放弃使用 PageSlider，故新版做了支持，只需要如右设置即可： `gestureFollowing: true`。
 
 ### 3. 锁定禁止滑动
 
@@ -122,12 +121,12 @@ pageSlide 最初的滑动较简单，直接判断手势进行翻屏，而有朋�
 有时候，当页面跳走返回时，希望能直接返回到上次跳走的页面，而不希望重头再来，只需如右设置：`rememberLastVisited: true`，即会保存当前页面索引到 localstorage，当返回时即可方便操作，如下：
 
 ```javascript
-new PageSlide({
+new PageSlider({
     pages: $('.page-wrap .page'),
     rememberLastVisited: true,
     oninit: function(){
         //返回时，需告诉我们此时为返回动作而不是刷新，可以通过 hash 告诉我们
-        //PageSlide 所有回调接口 this 指向 PageSlide，方便进行操作
+        //PageSlider 所有回调接口 this 指向 PageSlider，方便进行操作
         if(返回为 true){
             this.moveTo(this.lastVisitedIndex, true);
         }
@@ -140,7 +139,7 @@ new PageSlide({
 
 
 ```javascript
-new PageSlide({
+new PageSlider({
     pages: $('.page-wrap .page'),
     dev: 0 //0|1|2|3|...
 });
@@ -150,7 +149,7 @@ new PageSlide({
 有时候，会有产品的需求希望在页面往回翻时，就不再执行进场等动画了，执行过一次就够了，只需要设置 `animationPlayOnce: true` 即可。
 
 ```javascript
-new PageSlide({
+new PageSlider({
     pages: $('.page-wrap .page'),
     animationPlayOnce: true
 });
@@ -175,27 +174,27 @@ new PageSlide({
 
 ### 1. default
 
-<a href="http://littledu.github.io/pageSlide/example/html/default.html" target="_blank"><img src="http://littledu.github.io/pageSlide/cli/default.png"></a>
+<a href="http://littledu.github.io/PageSlider/example/html/default.html" target="_blank"><img src="http://littledu.github.io/PageSlider/cli/default.png"></a>
 
 ### 2. 左右滑动
 
-<a href="http://littledu.github.io/pageSlide/example/html/horizontal.html" target="_blank"><img src="http://littledu.github.io/pageSlide/cli/horizontal.png"></a>
+<a href="http://littledu.github.io/PageSlider/example/html/horizontal.html" target="_blank"><img src="http://littledu.github.io/PageSlider/cli/horizontal.png"></a>
 
 ### 3. 手势跟随
 
-<a href="http://littledu.github.io/pageSlide/example/html/gestureFollowing.html" target="_blank"><img src="http://littledu.github.io/pageSlide/cli/gestureFollowing.png"></a>
+<a href="http://littledu.github.io/PageSlider/example/html/gestureFollowing.html" target="_blank"><img src="http://littledu.github.io/PageSlider/cli/gestureFollowing.png"></a>
 
 ### 4. 锁屏
 
-<a href="http://littledu.github.io/pageSlide/example/html/lock.html" target="_blank"><img src="http://littledu.github.io/pageSlide/cli/lock.png"></a>
+<a href="http://littledu.github.io/PageSlider/example/html/lock.html" target="_blank"><img src="http://littledu.github.io/PageSlider/cli/lock.png"></a>
 
 ### 5. 只执行一次动画
 
-<a href="http://littledu.github.io/pageSlide/example/html/animationPlayOnce.html" target="_blank"><img src="http://littledu.github.io/pageSlide/cli/animationPlayOnce.png"></a>
+<a href="http://littledu.github.io/PageSlider/example/html/animationPlayOnce.html" target="_blank"><img src="http://littledu.github.io/PageSlider/cli/animationPlayOnce.png"></a>
 
 ### 6. 内容超出一屏先滚完再翻页
 
-<a href="http://littledu.github.io/pageSlide/example/html/longpage.html" target="_blank"><img src="http://littledu.github.io/pageSlide/cli/longpage.png"></a>
+<a href="http://littledu.github.io/PageSlider/example/html/longpage.html" target="_blank"><img src="http://littledu.github.io/PageSlider/cli/longpage.png"></a>
 
 ## TODO
 看后面需求是否有必要实现如下功能：

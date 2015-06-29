@@ -5,7 +5,7 @@
  * @author  : littledu
  * @version : 0.2.1
  * @date    : 2015-06-28
- * @repository: https://github.com/littledu/pageSlide
+ * @repository: https://github.com/littledu/PageSlider
  */
 
 ;
@@ -39,7 +39,7 @@
         offset,
         pageScrollTop;
 
-    function PageSlide(options) {
+    function PageSlider(options) {
         $.extend(this, defaults, options);
 
         if (this.pages.length <= 0) {
@@ -48,7 +48,7 @@
 
         this.target = this.pages.eq(0).parent();
         this.length = this.pages.length;
-        this.moveTo = PageSlide.prototype.moveTo;
+        this.moveTo = PageSlider.prototype.moveTo;
         this.index = 0;
         this.timer = null;
 
@@ -65,7 +65,7 @@
         this._init();
     }
 
-    PageSlide.prototype = {
+    PageSlider.prototype = {
         _init: function () {
             var self = this;
 
@@ -435,12 +435,12 @@
         }
     }
 
-    window.PageSlide = PageSlide;
+    window.PageSlider = PageSlider;
 
 })(Zepto, window);
 
 if (typeof define === "function" && define.amd) {
-    define("PageSlide", [], function () {
-        return PageSlide;
+    define("PageSlider", [], function () {
+        return PageSlider;
     });
 }

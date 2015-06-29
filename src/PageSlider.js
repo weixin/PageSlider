@@ -5,7 +5,7 @@
  * @author  : littledu
  * @version : 0.2.1
  * @date    : 2015-06-28
- * @repository: https://github.com/littledu/pageSlide
+ * @repository: https://github.com/littledu/PageSlider
  */
 
 ;
@@ -22,6 +22,8 @@
         dev: false,               //开发模式，传入数值，直接跳到正在开发的屏数
         oninit: function () {     //初始化完成时的回调
         },
+        onbeforechange: function () {  //开始切换前的回调
+        },
         onchange: function () {   //每一屏切换完成时的回调
         }
     };
@@ -37,7 +39,7 @@
         offset,
         pageScrollTop;
 
-    function PageSlide(options) {
+    function PageSlider(options) {
         $.extend(this, defaults, options);
 
         if (this.pages.length <= 0) {
@@ -46,7 +48,7 @@
 
         this.target = this.pages.eq(0).parent();
         this.length = this.pages.length;
-        this.moveTo = PageSlide.prototype.moveTo;
+        this.moveTo = PageSlider.prototype.moveTo;
         this.index = 0;
         this.timer = null;
 
@@ -63,7 +65,7 @@
         this._init();
     }
 
-    PageSlide.prototype = {
+    PageSlider.prototype = {
         _init: function () {
             var self = this;
 
@@ -161,10 +163,10 @@
             distance = endPos - startPos;
 
             //如果存在长页面，需多判断一下，以阻止默认行为
-            if(curPage[0].pageScrollHeight){
-                if(distance > 0 && pageScrollTop === pageHeight) e.preventDefault();
+            if (curPage[0].pageScrollHeight) {
+                if (distance > 0 && pageScrollTop === pageHeight) e.preventDefault();
 
-                if(distance < 0 && pageScrollTop === curPage[0].pageScrollHeight) e.preventDefault();
+                if (distance < 0 && pageScrollTop === curPage[0].pageScrollHeight) e.preventDefault();
             }
 
             //如果不需要手势跟随，直接返回
@@ -221,28 +223,28 @@
             this._setTransition();
 
             //swipeDown
-            if(distance > 0 && !lockPrev){
+            if (distance > 0 && !lockPrev) {
 
                 //如果是长页面，需判断一下是否到顶
                 if (curPage[0].pageScrollHeight && pageScrollTop > pageHeight) {
                     return;
-                } else if(distance > 20){
+                } else if (distance > 20) {
                     this.prev();
-                }else{
+                } else {
                     this.moveTo(this.index);
                 }
 
             }
 
             //swipeUp
-            if(distance < 0 && !lockNext){
+            if (distance < 0 && !lockNext) {
 
                 //如果是长页面，需判断一下是否到底
                 if (curPage[0].pageScrollHeight && pageScrollTop < curPage[0].pageScrollHeight) {
                     return;
-                } else if(distance < -20){
+                } else if (distance < -20) {
                     this.next();
-                }else{
+                } else {
                     this.moveTo(this.index);
                 }
             }
@@ -262,6 +264,8 @@
             }
 
             direct && this._removeTransition();
+
+            this.onbeforechange.call(this);
 
             if (this.direction === 'v') {
                 distance = -index * pageHeight + 'px';
@@ -341,6 +345,7 @@
 
                 if (height > pageHeight) {
                     $this.data('height', height);
+                    $this.css('overflow', 'auto');
                 }
 
                 $this.width(pageWidth + 'px');
@@ -430,12 +435,12 @@
         }
     }
 
-    window.PageSlide = PageSlide;
+    window.PageSlider = PageSlider;
 
 })(Zepto, window);
 
 if (typeof define === "function" && define.amd) {
-    define("PageSlide", [], function () {
-        return PageSlide;
+    define("PageSlider", [], function () {
+        return PageSlider;
     });
 }
