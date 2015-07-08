@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, minimal-ui">
+    <meta content="yes" name="apple-mobile-web-app-capable">
+    <meta content="black" name="apple-mobile-web-app-status-bar-style">
+    <meta name="format-detection" content="telephone=no, email=no">
+    <title>doubleSwipe</title>
+    <link rel="stylesheet" href="../css/style.css"/>
+    <!--custom style-->
+    <style>
+        .current .title{
+            -webkit-animation: slideToTop .8s ease both;
+        }
+
+        .current .subtitle{
+            -webkit-animation: slideToTop .8s 0.3s ease both;
+        }
+
+        .double{
+            text-align: center;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<div class="page-wrap">
+    <div class="page page1" data-lock-next="true">
+        <div class="title">page one</div>
+        <div class="subtitle">滑一下不翻页示例</div>
+        <div class="double">这是第一次滑动时的动作</div>
+        <div class="arrow"></div>
+    </div>
+
+    <div class="page">
+        <div class="title">page two</div>
+        <div class="subtitle">page two subtitle</div>
+        <div class="arrow"></div>
+    </div>
+    <div class="page">
+        <div class="title">page three</div>
+        <div class="subtitle">page three subtitle</div>
+        <div class="arrow"></div>
+    </div>
+    <div class="page">
+        <div class="title">page four</div>
+        <div class="subtitle">page four subtitle</div>
+    </div>
+</div>
+
+<script src="../js/zepto_modify.js"></script>
+<script src="../js/PageSlider.js"></script>
+<script>
+    var pageSlider = new PageSlider({
+        pages: $('.page-wrap .page'),
+        onSwipeUp: function(){
+            if(this.index === 0){
+                var page = $(this.pages).eq(0);
+                page.find('.double').show();
+                page.data('lock-next', false);
+            }
+        },
+        onchange: function(){
+            if(this.prevIndex === 0){
+                var page = $(this.pages).eq(0);
+                page.find('.double').hide();
+                page.data('lock-next', true);
+            }
+        }
+    });
+</script>
+</body>
+</html>

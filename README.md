@@ -68,8 +68,12 @@ new PageSlider({
     animationPlayOnce: false        //可选，切换页面时，动画只执行一次
     dev: false,                     //可选，开发模式，传入具体页面索引值
     oninit: function () {},         //可选，初始化完成时的回调
-    onbeforechange: function () {}  //可选，开始切换前的回调
-    onchange: function () {}        //可选，每一屏切换完成时的回调
+    onbeforechange: function () {}, //可选，开始切换前的回调
+    onchange: function () {},       //可选，每一屏切换完成时的回调
+    onSwipeUp: function () {},      //可选，swipeUp 回调
+    onSwipeDown: function () {},    //可选，swipeDown 回调
+    onSwipeLeft: function () {},    //可选，swipeLeft 回调
+    onSwipeRight: function () {}    //可选，swipeRight 回调
 });
 ```
 
@@ -170,6 +174,10 @@ new PageSlider({
 ```
 在 `.page` 元素上设置 `-webkit-overflow-scrolling: touch;` 可触发原生的平滑滚动，让滚动效果体验更舒服，不设置也可以，但效果相差很大; 内层需设置一个大于屏幕的高度值，才会触发此效果，如果不设置，默认是遍历直接的子元素高度和来跟屏幕高度作比较判断是否是长内容页。
 
+
+### 8. 第一次向下/向上滑时不触发翻页，第二次时再翻页
+有时候，会遇到这样的需求，页面有隐藏的一些内容，但需要在第一次向下滑的时候才显示出来，这时要禁止翻页，然后交互完成后再滑才是翻页，这里提供了个示例以方便用户参考，具体查看下面 example。
+
 ## example
 
 ### 1. default
@@ -196,15 +204,19 @@ new PageSlider({
 
 <a href="http://littledu.github.io/PageSlider/example/html/longpage.html" target="_blank"><img src="http://littledu.github.io/PageSlider/cli/longpage.png"></a>
 
+### 7. 第一次滑屏不翻页，第二次滑屏才翻页
+
+<a href="http://littledu.github.io/PageSlider/example/html/doubleSwipe.html" target="_blank"><img src="http://littledu.github.io/PageSlider/cli/doubleSwipe.png"></a>
+
 ## TODO
 看后面需求是否有必要实现如下功能：
 
 1. scale 的动画切换方式
 2. cover 的动画切换方式
-3. 支持内容超出一屏先滚完再翻页[0.2.1 已支持]
 
 ## Releases
 
+#### 0.2.2 增加多一个翻页示例，增加多 4 个 onSwipeUp 等回调接口，增加 prevIndex 索引
 #### 0.2.1 增加只执行一次动画，onbeforechange 回调，内容超出一屏先滚完再翻页 功能。
 #### 0.2.0 基于 zepto 重写，去除 预加载 等功能。
 #### 0.1.0 实现基本功能。

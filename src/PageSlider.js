@@ -3,8 +3,8 @@
  */
 /**
  * @author  : littledu
- * @version : 0.2.1
- * @date    : 2015-06-28
+ * @version : 0.2.2
+ * @date    : 2015-07-08
  * @repository: https://github.com/littledu/PageSlider
  */
 
@@ -20,6 +20,10 @@
         preventDefault: true,
         animationPlayOnce: false,
         dev: false,               //开发模式，传入数值，直接跳到正在开发的屏数
+        onSwipeUp: function(){},
+        onSwipeDown: function(){},
+        onSwipeLeft: function(){},
+        onSwipeRight: function(){},
         oninit: function () {     //初始化完成时的回调
         },
         onbeforechange: function () {  //开始切换前的回调
@@ -110,7 +114,10 @@
                 this.lastVisitedIndex = this._getLastVisited();
             }
 
-            this.moveTo(this.index, true);
+            //初始化时不再直接调用 moveTo, 免得初始化时还会回调一次 onchange 等接口 from 0.2.2
+            //this.moveTo(this.index, true);
+            this.target.css('-webkit-transform', 'translate3d(0, 0, 0)');
+            this.pages.eq(0).addClass(this.currentClass);
 
             this.oninit.call(this);
 
@@ -223,29 +230,34 @@
             this._setTransition();
 
             //swipeDown
-            if (distance > 0 && !lockPrev) {
+            if(distance > 0){
+                this.direction === 'v' ? this.onSwipeDown.call(this) : this.onSwipeRight.call(this);
 
-                //如果是长页面，需判断一下是否到顶
-                if (curPage[0].pageScrollHeight && pageScrollTop > pageHeight) {
-                    return;
-                } else if (distance > 20) {
-                    this.prev();
-                } else {
-                    this.moveTo(this.index);
+                if(!lockPrev){
+                    //如果是长页面，需判断一下是否到顶
+                    if (curPage[0].pageScrollHeight && pageScrollTop > pageHeight) {
+                        return;
+                    } else if (distance > 20) {
+                        this.prev();
+                    } else {
+                        this.moveTo(this.index);
+                    }
                 }
-
             }
 
             //swipeUp
-            if (distance < 0 && !lockNext) {
+            if(distance < 0){
+                this.direction === 'v' ? this.onSwipeUp.call(this) : this.onSwipeLeft.call(this);
 
-                //如果是长页面，需判断一下是否到底
-                if (curPage[0].pageScrollHeight && pageScrollTop < curPage[0].pageScrollHeight) {
-                    return;
-                } else if (distance < -20) {
-                    this.next();
-                } else {
-                    this.moveTo(this.index);
+                if(!lockNext){
+                    //如果是长页面，需判断一下是否到底
+                    if (curPage[0].pageScrollHeight && pageScrollTop < curPage[0].pageScrollHeight) {
+                        return;
+                    } else if (distance < -20) {
+                        this.next();
+                    } else {
+                        this.moveTo(this.index);
+                    }
                 }
             }
         },
@@ -280,6 +292,7 @@
             clearTimeout(this.timer);
             this.timer = setTimeout(function () {
                 self._currentClass(index);
+                self.prevIndex = self.index;
                 self.index = index;
                 self.onchange.call(self);
 
