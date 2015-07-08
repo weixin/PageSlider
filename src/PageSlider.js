@@ -331,22 +331,18 @@
 
             this.pages.each(function () {
                 var $this = $(this),
-                    $children = $this.children(),
-                    height = 0;
+                    $PageSliderWraper = $this.wrapInner('<div class="PageSlider__wraper"></div>').find('.PageSlider__wraper'),
+                    height = $PageSliderWraper.height();
+
 
                 //当子元素高度超过页面时，需滚完再切换
-                if ($children.length > 1) {
-                    $children.each(function () {
-                        height += $(this).height();
-                    })
-                } else {
-                    height = $children.height();
-                }
-
-                if (height > pageHeight) {
+                if(height > pageHeight){
                     $this.data('height', height);
                     $this.css('overflow', 'auto');
                 }
+
+                //再清除辅助层
+                $PageSliderWraper.children().unwrap();
 
                 $this.width(pageWidth + 'px');
                 $this.height(pageHeight + 'px');
