@@ -37,8 +37,8 @@
     };
 
     //一些辅助全局变量
-    var pageWidth,
-        pageHeight,
+    var pageWidth = document.documentElement.clientWidth,
+        pageHeight = document.documentElement.clientHeight,
         curPage,
         lockNext,
         lockPrev,
@@ -83,6 +83,23 @@
             //初始化设置每一屏的宽高
             this._reset();
 
+            //如果是长页面
+            this.pages.each(function () {
+                var $this = $(this),
+                    $PageSliderWraper = $this.wrapInner('<div class="PageSlider__wraper"></div>').find('.PageSlider__wraper'),
+                    height = $PageSliderWraper.height();
+
+
+                //当子元素高度超过页面时，需滚完再切换
+                if (height > pageHeight) {
+                    $this.data('height', height);
+                    $this.css('overflow', 'auto');
+                }
+
+                //再清除辅助层
+                $PageSliderWraper.children().unwrap();
+            });
+
             //如果是横向滚动
             if (this.direction === 'h') {
                 this.pages.css('float', 'left');
@@ -120,7 +137,7 @@
 
             //初始化时不再直接调用 moveTo, 免得初始化时还会回调一次 onchange 等接口 from 0.2.2
             //this.moveTo(this.index, true);
-            this.target.css('-webkit-transform', 'translate3d(0, 0, 0)');
+            this.target.css('-webkit-transform', 'translate(0, 0)');
             this.pages.eq(0).addClass(this.currentClass);
 
             this.oninit.call(this);
@@ -154,7 +171,7 @@
             //手势跟随判断
             if (this.gestureFollowing) {
                 //获取当前的位置值
-                var valArr = this.target.css('-webkit-transform').match(/translate3d\((-?\d+)px,\s+(-?\d+)px,.*\)/);
+                var valArr = this.target.css('-webkit-transform').match(/translate\((-?\d+)px,\s+(-?\d+)px.*\)/);
                 offset = parseFloat(this.direction === 'v' ? valArr[2] : valArr[1]);
             }
         },
@@ -206,9 +223,9 @@
             this._removeTransition();
 
             if (this.direction === 'v') {
-                this.target.css('-webkit-transform', 'translate3d(0, ' + distance + ', 0)');
+                this.target.css('-webkit-transform', 'translate(0, ' + distance + ')');
             } else {
-                this.target.css('-webkit-transform', 'translate3d(' + distance + ', 0, 0)');
+                this.target.css('-webkit-transform', 'translate(' + distance + ', 0)');
             }
 
 
@@ -285,12 +302,12 @@
 
             if (this.direction === 'v') {
                 distance = -index * pageHeight + 'px';
-                this.target.css('-webkit-transform', 'translate3d(0, ' + distance + ', 0)');
+                this.target.css('-webkit-transform', 'translate(0, ' + distance + ')');
             }
 
             if (this.direction === 'h') {
                 distance = -index * pageWidth + 'px';
-                this.target.css('-webkit-transform', 'translate3d(' + distance + ', 0, 0)');
+                this.target.css('-webkit-transform', 'translate(' + distance + ', 0)');
             }
 
             clearTimeout(this.timer);
@@ -347,19 +364,7 @@
             pageHeight = document.documentElement.clientHeight;
 
             this.pages.each(function () {
-                var $this = $(this),
-                    $PageSliderWraper = $this.wrapInner('<div class="PageSlider__wraper"></div>').find('.PageSlider__wraper'),
-                    height = $PageSliderWraper.height();
-
-
-                //当子元素高度超过页面时，需滚完再切换
-                if (height > pageHeight) {
-                    $this.data('height', height);
-                    $this.css('overflow', 'auto');
-                }
-
-                //再清除辅助层
-                $PageSliderWraper.children().unwrap();
+                var $this = $(this);
 
                 $this.width(pageWidth + 'px');
                 $this.height(pageHeight + 'px');
