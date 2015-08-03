@@ -88,8 +88,7 @@
                 var $this = $(this),
                     $PageSliderWraper = $this.wrapInner('<div class="PageSlider__wraper"></div>').find('.PageSlider__wraper'),
                     height = $PageSliderWraper.height();
-
-
+                
                 //当子元素高度超过页面时，需滚完再切换
                 if (height > pageHeight) {
                     $this.data('height', height);
