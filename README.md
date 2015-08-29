@@ -35,7 +35,6 @@
 html, body, .page-wrap {
     width: 100%;
     height: 100%;
-    overflow: hidden;
 }
 
 .page {
@@ -216,6 +215,10 @@ new PageSlider({
 
 ## Releases
 
+#### 0.2.3
+  - 改写切换的实现方式，从动态计算屏幕宽高改为直接样式 100% 控制，切换因子也从具体的 px 改为简单的 100%
+  - 上面改动后，适配也由样式控制，移除监听 resize 事件
+  - 回调参数里增加 this.curPage，指向当前页面，之前版本都是通过 this.pages.eq(this.index) 实现，但实践中此参数出现频率非常高，故直接提供
 #### 0.2.2 增加多一个翻页示例，增加多 4 个 onSwipeUp 等回调接口，增加 prevIndex 索引
 #### 0.2.1 增加只执行一次动画，onbeforechange 回调，内容超出一屏先滚完再翻页 功能。
 #### 0.2.0 基于 zepto 重写，去除 预加载 等功能。

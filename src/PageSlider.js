@@ -3,8 +3,8 @@
  */
 /**
  * @author  : littledu
- * @version : 0.2.2
- * @date    : 2015-07-08
+ * @version : 0.2.3
+ * @date    : 2015-08-29
  * @repository: https://github.com/littledu/PageSlider
  */
 
@@ -39,11 +39,11 @@
     //一些辅助全局变量
     var pageWidth = document.documentElement.clientWidth,
         pageHeight = document.documentElement.clientHeight,
-        curPage,
         lockNext,
         lockPrev,
         state,
         startPos,
+        isGestureFollowing,
         offset,
         pageScrollTop;
 
@@ -58,7 +58,10 @@
         this.length = this.pages.length;
         this.moveTo = PageSlider.prototype.moveTo;
         this.index = 0;
+        this.curPage = this.pages.eq(this.index);
         this.timer = null;
+
+        isGestureFollowing = this.gestureFollowing;
 
         if (this.direction === 'vertical' || this.direction === 'v') {
             this.direction = 'v';
@@ -80,9 +83,6 @@
             //初始化CSS动画，好让滑动有缓动效果
             this.target.css('-webkit-transition', '-webkit-transform 0.5s ease');
 
-            //初始化设置每一屏的宽高
-            this._reset();
-
             //如果是长页面
             this.pages.each(function () {
                 var $this = $(this),
@@ -101,7 +101,14 @@
 
             //如果是横向滚动
             if (this.direction === 'h') {
-                this.pages.css('float', 'left');
+                this.target.css('position', 'relative');
+                this.pages.each(function(index){
+                    $(this).css({
+                        position: 'absolute',
+                        left: index * 100 + '%',
+                        top: 0
+                    });
+                });
             }
 
             //如果需要生成屏标识
@@ -124,18 +131,11 @@
                 self._endHandle(e);
             });
 
-            $(window).on('resize', function () {
-                self._reset();
-                self.moveTo(self.index, true);
-            });
-
             //如果需要记住上次访问的屏索引
             if (this.rememberLastVisited) {
                 this.lastVisitedIndex = this._getLastVisited();
             }
 
-            //初始化时不再直接调用 moveTo, 免得初始化时还会回调一次 onchange 等接口 from 0.2.2
-            //this.moveTo(this.index, true);
             this.target.css('-webkit-transform', 'translate(0, 0)');
             this.pages.eq(0).addClass(this.currentClass);
 
@@ -156,22 +156,21 @@
             startPos = this.direction === 'v' ? touch.clientY : touch.clientX;
 
             //是否禁止滑屏参数获取
-            curPage = this.pages.eq(this.index);
-            lockNext = curPage.data('lock-next');
-            lockPrev = curPage.data('lock-prev');
+            lockNext = this.curPage.data('lock-next');
+            lockPrev = this.curPage.data('lock-prev');
 
             //是否是长页面
-            curPage[0].pageScrollHeight = curPage.data('height');
-            if (curPage[0].pageScrollHeight) {
+            this.curPage[0].pageScrollHeight = this.curPage.data('height');
+            if (this.curPage[0].pageScrollHeight) {
+                isGestureFollowing && (this.gestureFollowing = false);
                 this.preventDefault = false;
-                pageScrollTop = pageHeight + curPage.scrollTop();
+                pageScrollTop = pageHeight + this.curPage.scrollTop();
             }
 
             //手势跟随判断
             if (this.gestureFollowing) {
                 //获取当前的位置值
-                var valArr = this.target.css('-webkit-transform').match(/translate\((-?\d+)px,\s+(-?\d+)px.*\)/);
-                offset = parseFloat(this.direction === 'v' ? valArr[2] : valArr[1]);
+                offset = -this.index * (this.direction === 'v' ? pageHeight : pageWidth);
             }
         },
 
@@ -190,10 +189,10 @@
             distance = endPos - startPos;
 
             //如果存在长页面，需多判断一下，以阻止默认行为
-            if (curPage[0].pageScrollHeight) {
+            if (this.curPage[0].pageScrollHeight) {
                 if (distance > 0 && pageScrollTop === pageHeight) e.preventDefault();
 
-                if (distance < 0 && pageScrollTop === curPage[0].pageScrollHeight) e.preventDefault();
+                if (distance < 0 && pageScrollTop === this.curPage[0].pageScrollHeight) e.preventDefault();
             }
 
             //如果不需要手势跟随，直接返回
@@ -255,7 +254,7 @@
 
                 if (!lockPrev) {
                     //如果是长页面，需判断一下是否到顶
-                    if (curPage[0].pageScrollHeight && pageScrollTop > pageHeight) {
+                    if (this.curPage[0].pageScrollHeight && pageScrollTop > pageHeight) {
                         return;
                     } else if (distance > 20) {
                         this.prev();
@@ -271,7 +270,7 @@
 
                 if (!lockNext) {
                     //如果是长页面，需判断一下是否到底
-                    if (curPage[0].pageScrollHeight && pageScrollTop < curPage[0].pageScrollHeight) {
+                    if (this.curPage[0].pageScrollHeight && pageScrollTop < this.curPage[0].pageScrollHeight) {
                         return;
                     } else if (distance < -20) {
                         this.next();
@@ -300,12 +299,12 @@
             this.onbeforechange.call(this);
 
             if (this.direction === 'v') {
-                distance = -index * pageHeight + 'px';
+                distance = -index * 100 + '%';
                 this.target.css('-webkit-transform', 'translate(0, ' + distance + ')');
             }
 
             if (this.direction === 'h') {
-                distance = -index * pageWidth + 'px';
+                distance = -index * 100 + '%';
                 this.target.css('-webkit-transform', 'translate(' + distance + ', 0)');
             }
 
@@ -319,10 +318,13 @@
                 direct && self._setTransition();
 
                 //如果是较长的页面，在翻屏时，重置滚动条位置
-                if (curPage && curPage[0].pageScrollHeight) {
+                if (self.curPage && self.curPage[0].pageScrollHeight) {
+                    isGestureFollowing && (self.gestureFollowing = true);
                     self.preventDefault = true;
-                    curPage.scrollTop(0);
+                    self.curPage.scrollTop(0);
                 }
+
+                self.curPage = self.pages.eq(self.index);
 
                 self.rememberLastVisited && self._saveLastVisited();
 
@@ -353,30 +355,6 @@
             this.pages.eq(index).addClass(currentClass);
             if (index !== this.index && !this.animationPlayOnce) {
                 this.pages.eq(this.index).removeClass(currentClass);
-            }
-        },
-
-        _reset: function () {
-            var direction = this.direction;
-
-            pageWidth = document.documentElement.clientWidth;
-            pageHeight = document.documentElement.clientHeight;
-
-            this.pages.each(function () {
-                var $this = $(this);
-
-                $this.width(pageWidth + 'px');
-                $this.height(pageHeight + 'px');
-            });
-
-            if (direction === 'v') {
-                this.target.width(pageWidth + 'px');
-                this.target.height(pageHeight * this.length + 'px');
-            }
-
-            if (direction === 'h') {
-                this.target.width(pageWidth * this.length + 'px');
-                this.target.height(pageHeight + 'px');
             }
         },
 
