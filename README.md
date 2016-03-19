@@ -181,31 +181,31 @@ new PageSlider({
 
 ### 1. default
 
-<a href="http://littledu.github.io/PageSlider/example/html/default.html" target="_blank"><img src="http://littledu.github.io/PageSlider/cli/default.png" width="200" height="200"></a>
+<a href="http://weixin.github.io/PageSlider/example/html/default.html" target="_blank"><img src="http://weixin.github.io/PageSlider/cli/default.png" width="200" height="200"></a>
 
 ### 2. 左右滑动
 
-<a href="http://littledu.github.io/PageSlider/example/html/horizontal.html" target="_blank"><img src="http://littledu.github.io/PageSlider/cli/horizontal.png" width="200" height="200"></a>
+<a href="http://weixin.github.io/PageSlider/example/html/horizontal.html" target="_blank"><img src="http://weixin.github.io/PageSlider/cli/horizontal.png" width="200" height="200"></a>
 
 ### 3. 手势跟随
 
-<a href="http://littledu.github.io/PageSlider/example/html/gestureFollowing.html" target="_blank"><img src="http://littledu.github.io/PageSlider/cli/gestureFollowing.png" width="200" height="200"></a>
+<a href="http://weixin.github.io/PageSlider/example/html/gestureFollowing.html" target="_blank"><img src="http://weixin.github.io/PageSlider/cli/gestureFollowing.png" width="200" height="200"></a>
 
 ### 4. 锁屏
 
-<a href="http://littledu.github.io/PageSlider/example/html/lock.html" target="_blank"><img src="http://littledu.github.io/PageSlider/cli/lock.png" width="200" height="200"></a>
+<a href="http://weixin.github.io/PageSlider/example/html/lock.html" target="_blank"><img src="http://weixin.github.io/PageSlider/cli/lock.png" width="200" height="200"></a>
 
 ### 5. 只执行一次动画
 
-<a href="http://littledu.github.io/PageSlider/example/html/animationPlayOnce.html" target="_blank"><img src="http://littledu.github.io/PageSlider/cli/animationPlayOnce.png" width="200" height="200"></a>
+<a href="http://weixin.github.io/PageSlider/example/html/animationPlayOnce.html" target="_blank"><img src="http://weixin.github.io/PageSlider/cli/animationPlayOnce.png" width="200" height="200"></a>
 
 ### 6. 内容超出一屏先滚完再翻页
 
-<a href="http://littledu.github.io/PageSlider/example/html/longpage.html" target="_blank"><img src="http://littledu.github.io/PageSlider/cli/longpage.png" width="200" height="200"></a>
+<a href="http://weixin.github.io/PageSlider/example/html/longpage.html" target="_blank"><img src="http://weixin.github.io/PageSlider/cli/longpage.png" width="200" height="200"></a>
 
 ### 7. 第一次滑屏不翻页，第二次滑屏才翻页
 
-<a href="http://littledu.github.io/PageSlider/example/html/doubleSwipe.html" target="_blank"><img src="http://littledu.github.io/PageSlider/cli/doubleSwipe.png" width="200" height="200"></a>
+<a href="http://weixin.github.io/PageSlider/example/html/doubleSwipe.html" target="_blank"><img src="http://weixin.github.io/PageSlider/cli/doubleSwipe.png" width="200" height="200"></a>
 
 ## TODO
 看后面需求是否有必要实现如下功能：
