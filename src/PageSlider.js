@@ -39,9 +39,9 @@
     //一些辅助全局变量
     var pageWidth = document.documentElement.clientWidth,
         pageHeight = document.documentElement.clientHeight,
+        state = 'end',
         lockNext,
         lockPrev,
-        state,
         startPos,
         isGestureFollowing,
         offset,
@@ -88,7 +88,7 @@
                 var $this = $(this),
                     $PageSliderWraper = $this.wrapInner('<div class="PageSlider__wraper"></div>').find('.PageSlider__wraper'),
                     height = $PageSliderWraper.height();
-                
+
                 //当子元素高度超过页面时，需滚完再切换
                 if (height > pageHeight) {
                     $this.data('height', height);
@@ -102,7 +102,7 @@
             //如果是横向滚动
             if (this.direction === 'h') {
                 this.target.css('position', 'relative');
-                this.pages.each(function(index){
+                this.pages.each(function (index) {
                     $(this).css({
                         position: 'absolute',
                         left: index * 100 + '%',
@@ -147,6 +147,10 @@
         _startHandle: function (e) {
             var touch = e.touches[0];
 
+            //是否禁止滑屏参数获取
+            lockNext = this.curPage.data('lock-next');
+            lockPrev = this.curPage.data('lock-prev');
+
             //如果动画在执行中则不予以操作
             if (state === 'running') {
                 e.preventDefault();
@@ -154,10 +158,6 @@
             }
 
             startPos = this.direction === 'v' ? touch.clientY : touch.clientX;
-
-            //是否禁止滑屏参数获取
-            lockNext = this.curPage.data('lock-next');
-            lockPrev = this.curPage.data('lock-prev');
 
             //是否是长页面
             this.curPage[0].pageScrollHeight = this.curPage.data('height');
@@ -329,7 +329,7 @@
                 self.rememberLastVisited && self._saveLastVisited();
 
                 state = 'end';
-                clearTimeout(this.timer);
+                clearTimeout(self.timer);
             }, 500);
         },
 
@@ -402,16 +402,16 @@
                 $this.data('animationid', ++index);
 
                 styleText += '.' + self.currentClass +
-                ' ' +
-                '[data-animationid="' + index + '"]' +
-                '{' +
-                '-webkit-animation-name: ' + animationName + ';' +
-                '-webkit-animation-duration: ' + animationDuration + 'ms;' +
-                '-webkit-animation-delay: ' + animationDelay + 'ms;' +
-                '-webkit-animation-timing-function: ' + animationTimeFunction + ';' +
-                '-webkit-animation-fill-mode: ' + animationFillMode + ';' +
-                '-webkit-animation-iteration-count: ' + animationIterationCount + ';' +
-                '}';
+                    ' ' +
+                    '[data-animationid="' + index + '"]' +
+                    '{' +
+                    '-webkit-animation-name: ' + animationName + ';' +
+                    '-webkit-animation-duration: ' + animationDuration + 'ms;' +
+                    '-webkit-animation-delay: ' + animationDelay + 'ms;' +
+                    '-webkit-animation-timing-function: ' + animationTimeFunction + ';' +
+                    '-webkit-animation-fill-mode: ' + animationFillMode + ';' +
+                    '-webkit-animation-iteration-count: ' + animationIterationCount + ';' +
+                    '}';
 
             });
 
