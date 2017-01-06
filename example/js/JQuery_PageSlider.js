@@ -299,6 +299,8 @@
 
             direct = direct || false;
 
+            index = parseInt(index);
+
             if (index >= this.length || index < 0) {
                 state = 'end';
                 return;
