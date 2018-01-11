@@ -64,7 +64,7 @@ new PageSlider({
     hasDot: 'false',                //可选，生成标识点结构，样式自己控制
     preventDefault: true,           //可选，是否阻止默认行为
     rememberLastVisited: true,      //可选，记住上一次访问结束后的索引值，可用于实现页面返回后是否回到上次访问的页面
-    animationPlayOnce: false        //可选，切换页面时，动画只执行一次
+    animationPlayOnce: false,       //可选，切换页面时，动画只执行一次
     dev: false,                     //可选，开发模式，传入具体页面索引值
     oninit: function () {},         //可选，初始化完成时的回调
     onbeforechange: function () {}, //可选，开始切换前的回调
